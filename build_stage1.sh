@@ -30,29 +30,6 @@ set -x
 set -e
 set -o pipefail
 
-## update script from git, commented out for now
-cd ${BuildDir}
-git clone https://github.com/fillet54/sig-atomic-buildscripts && cd sig-atomic-buildscripts && git checkout infrastructure-base 
-cd ${BuildDir}
-
-# Init, make sure we have the bits we need installed. 
-cp -f ${GitDir}/rhel-atomic-rebuild.repo /etc/yum.repos.d/
-yum -y install ostree rpm-ostree glib2 docker libvirt epel-release
-
-cp -f ${GitDir}/atomic7-testing.repo /etc/yum.repos.d/
-echo 'enabled=0' >> /etc/yum.repos.d/atomic7-testing.repo
-yum --enablerepo=atomic7-testing -y install rpm-ostree-toolbox
-
-service firewalld stop
-
-
-## backup the last built repo, commented out for now
-
-#  XXX: We need to only retain the last 14 builds or so, Todo, add a find + rm for older tree's
-#/bin/rsync -Ha --stats /srv/rolling/ /srv/rolling.${DateStamp} > ${LogFile} 2>&1
-#echo '----------' >> ${LogFile}
-
-## create repo in BuildDir, this will fail w/o issue if already exists
 
 if ! test -d ${BuildDir}/repo/objects; then
     ostree --repo=${BuildDir}/repo init --mode=archive-z2
